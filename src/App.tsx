@@ -7,11 +7,8 @@ import { QRCodeCanvas } from "qrcode.react";
 // Extiende la interfaz Window para incluir ethereum
 declare global {
   interface Window {
-  ethereum?: {
-    request: (...args: any[]) => Promise<any>;
-    // Puedes agregar más métodos si los necesitas
+    ethereum?: any;
   }
-}
 }
 
 function App() {
@@ -50,7 +47,7 @@ function App() {
       </div>
 
       <h1 className="text-5xl font-extrabold mb-6 drop-shadow-lg">
-        Vite + React + Tailwind + MetaMask + QR
+        Vite + React + Tailwind + MetaMask + QR + JHAMIL
       </h1>
 
       <div className="bg-white text-gray-900 px-8 py-6 rounded-2xl shadow-lg text-center">
