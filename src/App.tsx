@@ -22,11 +22,11 @@ function App() {
       alert("MetaMask no está instalado. Instálalo para continuar 🚀")
       return
     }
-
     try {
       const accounts: string[] = await window.ethereum.request({ method: "eth_requestAccounts" })
       setCurrentAccount(accounts[0])
       setShowWallet(true)
+      setScanQR(false)
     } catch (error) {
       console.error(error)
     }
@@ -52,66 +52,58 @@ function App() {
       </div>
 
       <h1 className="text-5xl font-extrabold mb-6 drop-shadow-lg">
-        Vite + React + Tailwind + MetaMask + QR + Scan
+        Vite + React + Tailwind + MetaMask + QR
       </h1>
-      <button
-                onClick={() => {
-                  setScanQR(!scanQR)
-                  setShowWallet(false)
-                }}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-              >
-                {scanQR ? "Cerrar Escáner" : "Escanear QR"}
-              </button>
-              {scanQR && (
-              <div className="mt-4 flex flex-col items-center space-y-2">
-                <QrReader
-                  constraints={{ facingMode: 'environment' }}
-                  scanDelay={500}
-                  onResult={(result, error) => {
-                    if (!!result) setScannedData(result?.text)
-                  }}
-                  style={{ width: 300 }}
-                />
-                {scannedData && (
-                  <p className="mt-2 text-sm text-gray-600 break-all font-mono">
-                    Resultado: {scannedData}
-                  </p>
-                )}
-              </div>
-            )}
+
       <div className="bg-white text-gray-900 px-8 py-6 rounded-2xl shadow-lg text-center flex flex-col items-center space-y-4">
-        {!currentAccount ? (
+        {/* Botón Escanear QR siempre visible */}
+        <button
+          onClick={() => {
+            setScanQR(!scanQR)
+            setShowWallet(false)
+          }}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+        >
+          {scanQR ? "Cerrar Escáner" : "Escanear QR"}
+        </button>
+
+        {scanQR && (
+          <div className="mt-4 flex flex-col items-center space-y-2">
+            <QrReader
+              constraints={{ facingMode: 'environment' }}
+              scanDelay={500}
+              onResult={(result, error) => {
+                if (!!result) setScannedData(result?.text)
+              }}
+              style={{ width: 300 }}
+            />
+            {scannedData && (
+              <p className="mt-2 text-sm text-gray-600 break-all font-mono">
+                Resultado: {scannedData}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Botón Conectar Wallet solo si no está conectado */}
+        {!currentAccount && !scanQR && (
           <button
             onClick={connectWallet}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
           >
             🔗 Conectar Wallet
           </button>
+        )}
 
-          
-        ) : (
+        {/* Si está conectado */}
+        {currentAccount && !scanQR && (
           <>
-            {/* Botones */}
             <div className="flex space-x-4">
               <button
-                onClick={() => {
-                  setShowWallet(!showWallet)
-                  setScanQR(false)
-                }}
+                onClick={() => setShowWallet(!showWallet)}
                 className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
               >
                 {showWallet ? "Ocultar Wallet + QR" : "Mostrar Wallet + QR"}
-              </button>
-
-              <button
-                onClick={() => {
-                  setScanQR(!scanQR)
-                  setShowWallet(false)
-                }}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-              >
-                {scanQR ? "Cerrar Escáner" : "Escanear QR"}
               </button>
 
               <button
@@ -122,32 +114,12 @@ function App() {
               </button>
             </div>
 
-            {/* Mostrar wallet + QR */}
-            {showWallet && currentAccount && (
+            {showWallet && (
               <div className="mt-4 flex flex-col items-center space-y-2">
                 <p className="text-sm text-gray-600 break-all font-mono">
                   ✅ Wallet: {currentAccount}
                 </p>
                 <QRCodeCanvas value={currentAccount} size={180} bgColor="#ffffff" fgColor="#000000" />
-              </div>
-            )}
-
-            {/* Escáner de QR */}
-            {scanQR && (
-              <div className="mt-4 flex flex-col items-center space-y-2">
-                <QrReader
-                  constraints={{ facingMode: 'environment' }}
-                  scanDelay={500}
-                  onResult={(result, error) => {
-                    if (!!result) setScannedData(result?.text)
-                  }}
-                  style={{ width: 300 }}
-                />
-                {scannedData && (
-                  <p className="mt-2 text-sm text-gray-600 break-all font-mono">
-                    Resultado: {scannedData}
-                  </p>
-                )}
               </div>
             )}
           </>
