@@ -4,6 +4,16 @@ import viteLogo from '/vite.svg'
 import './index.css'
 import { QRCodeCanvas } from "qrcode.react";
 
+// Extiende la interfaz Window para incluir ethereum
+declare global {
+  interface Window {
+  ethereum?: {
+    request: (...args: any[]) => Promise<any>;
+    // Puedes agregar más métodos si los necesitas
+  }
+}
+}
+
 function App() {
   const [currentAccount, setCurrentAccount] = useState(null)
 
